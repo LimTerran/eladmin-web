@@ -16,7 +16,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
         />
-        <rrOperation :crud="crud" />
+        <rrOperation />
       </div>
       <crudOperation :permission="permission" />
     </div>
@@ -63,12 +63,12 @@
           </div>
           <el-table ref="table" v-loading="crud.loading" highlight-current-row style="width: 100%;" :data="crud.data" @selection-change="crud.selectionChangeHandler" @current-change="handleCurrentChange">
             <el-table-column :selectable="checkboxT" type="selection" width="55" />
-            <el-table-column v-if="columns.visible('name')" prop="name" label="名称" />
-            <el-table-column v-if="columns.visible('dataScope')" prop="dataScope" label="数据权限" />
-            <el-table-column v-if="columns.visible('permission')" prop="permission" label="角色权限" />
-            <el-table-column v-if="columns.visible('level')" prop="level" label="角色级别" />
-            <el-table-column v-if="columns.visible('remark')" :show-overflow-tooltip="true" prop="remark" label="描述" />
-            <el-table-column v-if="columns.visible('createTime')" :show-overflow-tooltip="true" width="135px" prop="createTime" label="创建日期">
+            <el-table-column prop="name" label="名称" />
+            <el-table-column prop="dataScope" label="数据权限" />
+            <el-table-column prop="permission" label="角色权限" />
+            <el-table-column prop="level" label="角色级别" />
+            <el-table-column :show-overflow-tooltip="true" prop="remark" label="描述" />
+            <el-table-column :show-overflow-tooltip="true" width="135px" prop="createTime" label="创建日期">
               <template slot-scope="scope">
                 <span>{{ parseTime(scope.row.createTime) }}</span>
               </template>
@@ -133,13 +133,14 @@ import pagination from '@crud/Pagination'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
-// crud交由presenter持有
-const defaultCrud = CRUD({ title: '角色', url: 'api/roles', sort: 'level,asc', crudMethod: { ...crudRoles }})
 const defaultForm = { id: null, name: null, depts: [], remark: null, dataScope: '全部', level: 3, permission: null }
 export default {
   name: 'Role',
   components: { Treeselect, pagination, crudOperation, rrOperation, udOperation },
-  mixins: [presenter(defaultCrud), header(), form(defaultForm), crud()],
+  cruds() {
+    return CRUD({ title: '角色', url: 'api/roles', sort: 'level,asc', crudMethod: { ...crudRoles }})
+  },
+  mixins: [presenter(), header(), form(defaultForm), crud()],
   data() {
     return {
       defaultProps: { children: 'children', label: 'label' },
